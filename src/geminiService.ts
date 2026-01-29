@@ -10,10 +10,17 @@ export default async function handler(
   }
 
   try {
+    // ✅ API Key (Vercel 환경변수)
     const ai = new GoogleGenAI({
-      apiKey: process.env.GEMINI_API_KEY!, // 🔐 서버 전용
+      apiKey: process.env.GEMINI_API_KEY!,
     });
 
+    // ✅ body 검증
+    if (!req.body || !req.body.data) {
+      return res.status(400).json({ error: "Invalid request body" });
+    }
+
+    // ✅ ★ 핵심: data 반드시 선언
     const { data } = req.body;
 
     const promptText = `
@@ -47,6 +54,7 @@ All text must be in Korean.
 
     const parts: any[] = [{ text: promptText }];
 
+    // ✅ 사진 처리
     if (Array.isArray(data.photos)) {
       data.photos.forEach((photo: string) => {
         const match = photo.match(/^data:(image\/[a-z]+);base64,(.+)$/);
@@ -61,6 +69,7 @@ All text must be in Korean.
       });
     }
 
+    // ✅ Gemini 호출
     const response = await ai.models.generateContent({
       model: "gemini-1.5-flash",
       contents: { parts },
@@ -113,9 +122,14 @@ All text must be in Korean.
       },
     });
 
-    return res.status(200).json(JSON.parse(response.text!));
+    // ✅ 응답 검증
+    if (!response.text) {
+      throw new Error("Empty response from Gemini");
+    }
+
+    return res.status(200).json(JSON.parse(response.text));
   } catch (e) {
-    console.error(e);
+    console.error("Gemini API Error:", e);
     return res.status(500).json({ error: "AI 분석 실패" });
   }
 }
