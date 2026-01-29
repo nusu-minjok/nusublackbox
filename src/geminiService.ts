@@ -10,7 +10,9 @@ import { WizardData, AnalysisResult } from "../types";
  */
 export const analyzeLeakage = async (data: WizardData): Promise<AnalysisResult> => {
   // Initialize GoogleGenAI with a named parameter for the API key.
-  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+  const ai = new GoogleGenAI({
+  apiKey: import.meta.env.VITE_GEMINI_API_KEY
+  });
   
   const promptText = `
     Analyze the following home leakage situation and provide a structured guide for the user.
