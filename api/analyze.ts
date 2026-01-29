@@ -1,9 +1,12 @@
-import { GoogleGenAI, Type } from "@google/genai";
-import type { VercelRequest, VercelResponse } from "@vercel/node";
+import { GoogleGenAI } from "@google/genai";
+import type { IncomingMessage, ServerResponse } from "http";
 
 export default async function handler(
-  req: VercelRequest,
-  res: VercelResponse
+  req: IncomingMessage & { body?: any },
+  res: ServerResponse & {
+    status: (code: number) => any;
+    json: (data: any) => any;
+  }
 ) {
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });
@@ -38,14 +41,16 @@ JSON 형식으로만 응답하세요.
       contents: [{ text: promptText }],
     });
 
-    if (!response.text) {
+    const text =
+      response.candidates?.[0]?.content?.parts?.[0]?.text;
+
+    if (!text) {
       throw new Error("Empty Gemini response");
     }
 
-    return res.status(200).json(JSON.parse(response.text));
+    return res.status(200).json(JSON.parse(text));
   } catch (err) {
-    console.error(err);
+    console.error("Analyze API error:", err);
     return res.status(500).json({ error: "AI 분석 실패" });
   }
 }
-
