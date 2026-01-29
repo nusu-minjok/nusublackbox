@@ -11,7 +11,7 @@ import { WizardData, AnalysisResult } from "../types";
 export const analyzeLeakage = async (data: WizardData): Promise<AnalysisResult> => {
   // Initialize GoogleGenAI with a named parameter for the API key.
   const ai = new GoogleGenAI({
-  apiKey: import.meta.env.VITE_GEMINI_API_KEY
+  apiKey: import.meta.env.VITE_AIzaSyBNg1t8bGwDNC4FyH6qv-9HxOi2Hq3zxaM
 });
   
   const promptText = `
