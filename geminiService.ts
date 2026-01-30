@@ -8,7 +8,7 @@ import { WizardData, AnalysisResult } from "./types";
 export const analyzeLeakage = async (data: WizardData): Promise<AnalysisResult> => {
   // Fix: The API key availability is a hard requirement. 
   // Fix: Always use named parameter for apiKey and use process.env.API_KEY directly.
-  // Fix: Use 'gemini-3-pro-preview' for complex diagnosis tasks involving reasoning and multimodal data.
+  // Fix: Use 'gemini-1.5-flash' for complex diagnosis tasks involving reasoning and multimodal data.
   const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
   
   const promptText = `
@@ -66,7 +66,7 @@ export const analyzeLeakage = async (data: WizardData): Promise<AnalysisResult> 
 
   try {
     const response = await ai.models.generateContent({
-      model: 'gemini-3-pro-preview',
+      model: 'gemini-1.5-flash',
       contents: { parts },
       config: {
         responseMimeType: "application/json",
